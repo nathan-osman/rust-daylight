@@ -25,6 +25,53 @@
 #[macro_use]
 extern crate rocket;
 
+#[macro_use]
+extern crate serde_derive;
+
+extern crate rocket_contrib;
+extern crate serde;
+extern crate serde_json;
+extern crate sunrise;
+
+use rocket_contrib::json::Json;
+use rocket_contrib::serve::StaticFiles;
+
+#[derive(Deserialize)]
+struct Parameters {
+    latitude: f64,
+    longitude: f64,
+    year: i32,
+    month: u32,
+    day: u32,
+}
+
+#[derive(Serialize)]
+struct Response {
+    sunrise: i64,
+    sunset: i64,
+}
+
+#[post("/api", format = "json", data = "<parameters>")]
+fn api(parameters: Json<Parameters>) -> Json<Response> {
+    let (sunrise, sunset) = sunrise::sunrise_sunset(
+        parameters.latitude,
+        parameters.longitude,
+        parameters.year,
+        parameters.month,
+        parameters.day,
+    );
+    Json(Response {
+        sunrise: sunrise,
+        sunset: sunset,
+    })
+}
+
 fn main() {
-    //...
+    rocket::ignite()
+        .mount("/", routes![api])
+        .mount(
+            "/",
+            StaticFiles::from(concat!(env!("CARGO_MANIFEST_DIR"), "/static")),
+        )
+        .launch();
 }
