@@ -1,0 +1,7 @@
+[package]
+name = "daylight"
+version = "1.0.0"
+authors = ["Nathan Osman <nathan@quickmediasolutions.com>"]
+
+[dependencies]
+rocket = "0.4.0"
