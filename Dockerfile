@@ -16,7 +16,7 @@ FROM debian:stretch
 WORKDIR /opt/daylight
 
 # Copy the static files to the container
-COPY static .
+COPY static ./static
 
 # Copy the executable to the container
 COPY --from=0 /usr/src/daylight/target/release/daylight .
