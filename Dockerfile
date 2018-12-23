@@ -13,10 +13,13 @@ RUN cargo build --release
 FROM scratch
 
 # Set the directory for the executable
-WORKDIR /usr/local/bin
+WORKDIR /opt/daylight
+
+# Copy the static files to the container
+COPY static .
 
 # Copy the executable to the container
 COPY --from=0 /usr/src/daylight/target/release/daylight .
 
 # Run the executable
-ENTRYPOINT ["daylight"]
+ENTRYPOINT ["/opt/daylight/daylight"]
