@@ -1,4 +1,4 @@
-FROM rust:latest
+FROM rustlang/rust:nightly
 
 # Set the directory for the source code
 WORKDIR /usr/src/daylight
