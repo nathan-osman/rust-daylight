@@ -20,23 +20,28 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-#![feature(proc_macro_hygiene, decl_macro)]
-
-#[macro_use]
-extern crate rocket;
+extern crate bodyparser;
+extern crate iron;
+extern crate mount;
+extern crate router;
+extern crate staticfile;
+extern crate sunrise;
 
 #[macro_use]
 extern crate serde_derive;
-
-extern crate rocket_contrib;
-extern crate serde;
 extern crate serde_json;
-extern crate sunrise;
 
-use rocket_contrib::json::Json;
-use rocket_contrib::serve::StaticFiles;
+use std::path::Path;
 
-#[derive(Deserialize)]
+use iron::mime::Mime;
+use iron::prelude::*;
+use iron::status;
+
+use mount::Mount;
+use router::Router;
+use staticfile::Static;
+
+#[derive(Clone, Deserialize)]
 struct Parameters {
     latitude: f64,
     longitude: f64,
@@ -46,32 +51,44 @@ struct Parameters {
 }
 
 #[derive(Serialize)]
-struct Response {
+struct Result {
     sunrise: i64,
     sunset: i64,
 }
 
-#[post("/api", format = "json", data = "<parameters>")]
-fn api(parameters: Json<Parameters>) -> Json<Response> {
-    let (sunrise, sunset) = sunrise::sunrise_sunset(
-        parameters.latitude,
-        parameters.longitude,
-        parameters.year,
-        parameters.month,
-        parameters.day,
-    );
-    Json(Response {
-        sunrise: sunrise,
-        sunset: sunset,
-    })
+fn api(req: &mut Request) -> IronResult<Response> {
+    match req.get::<bodyparser::Struct<Parameters>>() {
+        Ok(Some(parameters)) => {
+            let content_type = "application/json".parse::<Mime>().unwrap();
+            let (sunrise, sunset) = sunrise::sunrise_sunset(
+                parameters.latitude,
+                parameters.longitude,
+                parameters.year,
+                parameters.month,
+                parameters.day,
+            );
+            let result = Result {
+                sunrise: sunrise,
+                sunset: sunset,
+            };
+            Ok(Response::with((
+                content_type,
+                status::Ok,
+                serde_json::to_string(&result).unwrap(),
+            )))
+        }
+        _ => Ok(Response::with(status::BadRequest)),
+    }
 }
 
 fn main() {
-    rocket::ignite()
-        .mount("/", routes![api])
-        .mount(
-            "/",
-            StaticFiles::from(concat!(env!("CARGO_MANIFEST_DIR"), "/static")),
-        )
-        .launch();
+    let mut router = Router::new();
+    router.post("/", api, "api");
+
+    let mut mount = Mount::new();
+    mount
+        .mount("/api", router)
+        .mount("/", Static::new(Path::new("static")));
+
+    Iron::new(mount).http("localhost:8000").unwrap();
 }
