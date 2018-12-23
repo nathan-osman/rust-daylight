@@ -10,7 +10,7 @@ COPY . .
 RUN cargo build --release
 
 
-FROM stretch
+FROM debian:stretch
 
 # Set the directory for the executable
 WORKDIR /opt/daylight
