@@ -4,12 +4,13 @@ version = "1.0.0"
 authors = ["Nathan Osman <nathan@quickmediasolutions.com>"]
 
 [dependencies]
-bodyparser = "0.8.*"
-iron = "0.6.*"
-mount = "0.4.*"
-router = "0.6.*"
+bodyparser = "0.8.0"
+ctrlc = { version = "3.0", features = ["termination"] }
+iron = "0.6.0"
+mount = "0.4.0"
+router = "0.6.0"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
-staticfile = "0.5.*"
+staticfile = "0.5.0"
 sunrise = "1.0.0"

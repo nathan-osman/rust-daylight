@@ -21,17 +21,19 @@
 // IN THE SOFTWARE.
 
 extern crate bodyparser;
+extern crate ctrlc;
 extern crate iron;
 extern crate mount;
 extern crate router;
+extern crate serde_json;
 extern crate staticfile;
 extern crate sunrise;
 
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_json;
 
 use std::path::Path;
+use std::sync::{Arc, Condvar, Mutex};
 
 use iron::mime::Mime;
 use iron::prelude::*;
@@ -54,6 +56,26 @@ struct Parameters {
 struct Result {
     sunrise: i64,
     sunset: i64,
+}
+
+fn wait_for_signal() {
+    let pair = Arc::new((Mutex::new(false), Condvar::new()));
+    let copy = pair.clone();
+
+    ctrlc::set_handler(move || {
+        let &(ref lock, ref cvar) = &*copy;
+        let mut started = lock.lock().unwrap();
+        *started = true;
+        cvar.notify_one();
+    })
+    .expect("unable to set signal handler");
+
+    let &(ref lock, ref cvar) = &*pair;
+
+    let mut started = lock.lock().unwrap();
+    while !*started {
+        started = cvar.wait(started).unwrap();
+    }
 }
 
 fn api(req: &mut Request) -> IronResult<Response> {
@@ -90,5 +112,7 @@ fn main() {
         .mount("/api", router)
         .mount("/", Static::new(Path::new("static")));
 
-    Iron::new(mount).http("0.0.0.0:8000").unwrap();
+    let mut listening = Iron::new(mount).http("0.0.0.0:8000").unwrap();
+    wait_for_signal();
+    listening.close().unwrap();
 }
