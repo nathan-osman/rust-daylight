@@ -90,5 +90,5 @@ fn main() {
         .mount("/api", router)
         .mount("/", Static::new(Path::new("static")));
 
-    Iron::new(mount).http("localhost:8000").unwrap();
+    Iron::new(mount).http("0.0.0.0:8000").unwrap();
 }
