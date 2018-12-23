@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>Sunrise and Sunset Calculator</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/semantic.min.css">
+    <link rel="stylesheet" href="/css/calendar.min.css">
+    <link rel="stylesheet" href="/css/daylight.css">
+  </head>
+  <body>
+
+    <div class="ui middle aligned center aligned grid">
+      <div class="column">
+
+        <!-- Header -->
+        <h2 class="ui header">
+          Sunrise and Sunset Calculator
+          <div class="sub header">
+            Use this tool to calculate the sunrise and sunset times for a specific location.
+          </div>
+        </h2>
+
+        <div class="ui divider"></div>
+
+        <div class="ui stackable equal width grid">
+          <div class="column">
+            <div class="ui segment">
+
+              <div class="ui inverted dimmer">
+                <div class="ui large text loader">Calculating...</div>
+              </div>
+
+              <form class="ui form">
+                <div class="field" id="latitude">
+                  <div class="ui left icon input">
+                    <i class="globe icon"></i>
+                    <input type="text" placeholder="Latitude">
+                  </div>
+                </div>
+                <div class="field" id="longitude">
+                  <div class="ui left icon input">
+                    <i class="globe icon"></i>
+                    <input type="text" placeholder="Longitude">
+                  </div>
+                </div>
+                <div class="field" id="date">
+                  <div class="ui left icon input">
+                    <i class="calendar alternate outline icon"></i>
+                    <input type="text" placeholder="Date">
+                  </div>
+                </div>
+                <div class="ui fluid large primary submit button" id="calculate">
+                  &nbsp;
+                  Calculate
+                </div>
+              </form>
+
+            </div>
+          </div>
+          <div class="column">
+
+            <div class="ui middle aligned center aligned grid">
+              <div class="column" id="result">
+                <div class="ui small grey statistic">
+                  <div class="value" id="sunrise"></div>
+                  <div class="label">sunrise</div>
+                </div>
+                <div class="ui small grey statistic">
+                  <div class="value" id="sunset"></div>
+                  <div class="label">sunset</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="ui divider"></div>
+
+        <p>
+          &copy; Copyright 2018 &mdash;
+          <a href="https://quickmediasolutions.com" target="_blank">Nathan Osman</a>
+        </p>
+
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/semantic.min.js"></script>
+    <script src="/js/calendar.min.js"></script>
+    <script src="/js/moment.min.js"></script>
+    <script src="/js/moment-timezone.min.js"></script>
+    <script src="/js/daylight.js"></script>
+  </body>
+</html>
