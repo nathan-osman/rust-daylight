@@ -21,20 +21,127 @@
  * IN THE SOFTWARE.
  */
 
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background-color: #dadada;
+  background-color: #1d1d1d;
 }
 
-.grid {
-  height: 100%;
+body,
+button,
+input {
+  color: #d7d7d7;
+  font-family: "Roboto Condensed";
+  font-size: 14pt;
+  font-weight: 300;
 }
 
-#result {
+button,
+input {
+  border-radius: 3px;
+  padding: 8px 16px;
+  width: 100%;
+}
+
+button:focus,
+input:focus{
+  border-color: #f77;
+  outline: none;
+}
+
+button {
+  background-color: #3f3f3f;
+  border: 1px solid #3f3f3f;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1d1d1d;
+}
+
+input {
+  background-color: #1d1d1d;
+  border: 1px solid transparent;
+  display: block;
+}
+
+/* Grid classes */
+
+.container {
+  margin: auto;
+  max-width: 640px;
+  padding: 0 20px;
+}
+
+.row {
+  display: flex;
+  margin: 0 -16px;
+}
+
+.row .column {
+  flex-grow: 1;
+  margin: 0 16px;
+}
+
+/* Header classes */
+
+.header {
+  margin: 40px 0 60px;
+  text-align: center;
+}
+
+.header h1 {
+  color: #f77;
+  font-size: 48pt;
+  font-weight: 300;
+  margin: 0;
+}
+
+.header p {
+  margin: 0;
+}
+
+/* Form */
+
+.form {
+  background-color: #272727;
+  border-radius: 6px;
+  padding: 24px;
+}
+
+.form .field {
+  margin: 0 0 32px;
+}
+
+.form .field .label {
+  margin: 0 0 8px;
+}
+
+/* Spinner */
+
+.spinner {
   display: none;
+  margin-top: 48px;
+  text-align: center;
 }
 
-@media (min-width:768px) {
-  body > .grid > .column {
-    max-width: 640px;
-  }
+/* Result */
+
+.result {
+  display: none;
+  margin-top: 24px;
+}
+
+.result h2 {
+  font-size: 36pt;
+  font-weight: 300;
+  text-align: center;
+}
+
+.result h2 .label {
+  color: #f77;
+  display: block;
+  font-size: 18pt;
 }

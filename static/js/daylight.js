@@ -23,23 +23,30 @@
 
 $(function() {
 
-  var TIME_FMT = "h:mm A";
+  // Time format for the times
+  var TIME_FMT = "h:mma";
 
-  // Grab a reference to the location fields and calculate button
-  var $latitude = $('#latitude input');
-  var $longitude = $('#longitude input');
+  // Grab references to the input fields
+  var $latitude = $('#latitude');
+  var $longitude = $('#longitude');
+  var $year = $('#year');
+  var $month = $('#month');
+  var $day = $('#day');
 
-  // Initialize the date field
-  var $date = $('#date')
-  .calendar({
-    type: 'date'
-  })
-  .calendar('set date', new Date());
+  // Grab references to the spinner and result block
+  var $spinner = $('#spinner');
+  var $result = $('#result');
 
+  // Initialize the date fields with the current date
+  var d = new Date();
+  $year.val(d.getYear() + 1900);
+  $month.val(d.getMonth() + 1);
+  $day.val(d.getDate());
+
+  // Perform the calculation and update the result display
   function calculate() {
-    $('#result').hide();
-    $('.ui.dimmer').addClass('active');
-    var d = $date.calendar('get date');
+    $spinner.show();
+    $result.hide();
     $.ajax({
       method: 'POST',
       url: "/api",
@@ -47,22 +54,22 @@ $(function() {
       data: JSON.stringify({
         latitude: parseFloat($latitude.val()),
         longitude: parseFloat($longitude.val()),
-        year: 1900 + d.getYear(),
-        month: 1 + d.getMonth(),
-        day: d.getDate()
+        year: parseFloat($year.val()),
+        month: parseFloat($month.val()),
+        day: parseFloat($day.val())
       })
     })
     .done(function(d) {
-      $('#sunrise').text(moment.unix(d.sunrise).format(TIME_FMT));
-      $('#sunset').text(moment.unix(d.sunset).format(TIME_FMT));
-      $('#result').show();
+      $('#sunrise .value').text(moment.unix(d.sunrise).format(TIME_FMT));
+      $('#sunset .value').text(moment.unix(d.sunset).format(TIME_FMT));
+      $result.show();
     })
     .always(function() {
-      $('.ui.dimmer').removeClass('active');
+      $spinner.hide();
     });
   }
 
-  // If location information is available, use it
+  // Initialize the location fields if available
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos) {
       $latitude.val(pos.coords.latitude);
@@ -71,7 +78,7 @@ $(function() {
     });
   }
 
-  // Perform calculation when the button is clicked
+  // Set the event handler for the button
   $('#calculate').click(calculate);
 
 });
